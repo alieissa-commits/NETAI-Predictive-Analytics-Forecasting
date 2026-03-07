@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netai-forecast-config
+  namespace: netai
+  labels:
+    app: netai-forecast
+data:
+  default_config.yaml: |
+    data:
+      num_days: 90
+      sampling_interval_minutes: 5
+      metrics:
+        - throughput_mbps
+        - latency_ms
+        - packet_loss_pct
+        - retransmits
+      anomaly_probability: 0.03
+      anomaly_severity_range: [2.0, 5.0]
+
+    preprocessing:
+      scaler: minmax
+      sequence_length: 48
+      forecast_horizon: 12
+
+    models:
+      arima:
+        order: [2, 1, 2]
+        seasonal_order: [1, 1, 1, 288]
+
+      prophet:
+        yearly_seasonality: false
+        weekly_seasonality: true
+        daily_seasonality: true
+        changepoint_prior_scale: 0.05
+
+      lstm:
+        hidden_size: 128
+        num_layers: 2
+        dropout: 0.2
+        learning_rate: 0.001
+        batch_size: 64
+        epochs: 50
+        patience: 10
+
+      transformer:
+        d_model: 64
+        nhead: 4
+        num_encoder_layers: 3
+        dim_feedforward: 256
+        dropout: 0.1
+        learning_rate: 0.0005
+        batch_size: 64
+        epochs: 50
+        patience: 10
+
+      ensemble:
+        weights:
+          arima: 0.15
+          prophet: 0.20
+          lstm: 0.30
+          transformer: 0.35
+
+    early_warning:
+      thresholds:
+        throughput_mbps:
+          warning_drop_pct: 20.0
+          critical_drop_pct: 50.0
+        latency_ms:
+          warning_increase_pct: 30.0
+          critical_increase_pct: 100.0
+        packet_loss_pct:
+          warning_threshold: 1.0
+          critical_threshold: 5.0
+      trend_window: 12
+      confidence_threshold: 0.8
+
+    incident_report:
+      llm_api_url: "https://llm.nrp.ai/v1/chat/completions"
+      llm_model: "qwen3-vl"
+      max_tokens: 1024
+      temperature: 0.3
+      use_fallback_templates: true
+
+    api:
+      host: "0.0.0.0"
+      port: 8000

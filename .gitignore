@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data artifacts
+*.db
+*.sqlite
+data/*.csv
+data/*.json
+
+# Model artifacts
+models/saved/
+*.pth
+*.pt
+*.pkl
+*.joblib
+checkpoints/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+# Proposal build artifacts
+proposal/*.aux
+proposal/*.log
+proposal/*.out
+proposal/*.toc
+proposal/*.fls
+proposal/*.fdb_latexmk
+proposal/*.synctex.gz

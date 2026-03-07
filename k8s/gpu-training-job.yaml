@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: netai-model-training
+  namespace: netai
+  labels:
+    app: netai-forecast
+    component: training
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: netai-forecast
+        component: training
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: trainer
+          image: registry.nrp.ai/netai/forecast-api:latest
+          command:
+            - python
+            - scripts/train.py
+            - --config=configs/default_config.yaml
+            - --metric=throughput_mbps
+            - --days=90
+            - --profile=wan_research
+            - --output-dir=/app/models/saved
+          resources:
+            requests:
+              cpu: "2"
+              memory: "8Gi"
+              nvidia.com/gpu: "1"
+            limits:
+              cpu: "8"
+              memory: "32Gi"
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: model-storage
+              mountPath: /app/models/saved
+            - name: config
+              mountPath: /app/configs/default_config.yaml
+              subPath: default_config.yaml
+      volumes:
+        - name: model-storage
+          persistentVolumeClaim:
+            claimName: netai-model-pvc
+        - name: config
+          configMap:
+            name: netai-forecast-config
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule

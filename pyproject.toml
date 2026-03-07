@@ -1,23 +1,17 @@
-[project]
-name = "netai-predictive-analytics-forecasting"
-version = "0.1.0"
-description = "PoC for NETAI GSoC: predictive analytics and forecasting for network telemetry"
-readme = "README.md"
-requires-python = ">=3.10"
-dependencies = [
-  "numpy>=1.26",
-  "pandas>=2.2",
-  "prophet>=1.1.6",
-  "scikit-learn>=1.5",
-  "torch>=2.2",
-  "openai>=1.35",
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::FutureWarning",
 ]
 
-[project.optional-dependencies]
-dev = [
-  "pytest>=8.0",
-  "ruff>=0.6",
-]
+[tool.ruff]
+target-version = "py310"
+line-length = 100
 
-[tool.uv]
-package = false
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
